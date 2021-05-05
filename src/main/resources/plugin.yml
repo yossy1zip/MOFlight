@@ -1,0 +1,10 @@
+name: MOFlight
+version: ${project.version}
+main: com.yiorno.moflight.MOFlight
+api-version: 1.16
+authors: [ yossy_zip ]
+depend: [LuckPerms]
+
+commands:
+  flight:
+    description: purchase a flight effect.
