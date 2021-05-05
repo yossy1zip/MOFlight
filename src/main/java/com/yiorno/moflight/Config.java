@@ -9,7 +9,9 @@ public class Config {
     private FileConfiguration config = null;
 
     public static Integer checkingInterval;
-    public static Integer pricePerMinute;
+    public static Integer price1;
+    public static Integer price2;
+    public static Integer price3;
 
     public Config(Plugin plugin) {
         this.plugin = plugin;
@@ -24,7 +26,10 @@ public class Config {
         config = plugin.getConfig();
 
         checkingInterval = config.getInt("checking-interval");
-        pricePerMinute = config.getInt("price-per-minute");
+        price1 = config.getInt("price1");
+        price2 = config.getInt("price2");
+        price3 = config.getInt("price3");
+        //prices per minute
 
     }
 

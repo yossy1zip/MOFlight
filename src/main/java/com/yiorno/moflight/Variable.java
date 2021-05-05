@@ -7,7 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class val {
+public class Variable {
     public static Map<Player, Integer> map = new HashMap<>();
 
     public static List<Player> flightplayer = new ArrayList<>();

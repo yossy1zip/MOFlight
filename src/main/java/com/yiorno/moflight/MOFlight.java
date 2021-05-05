@@ -1,14 +1,20 @@
 package com.yiorno.moflight;
 
+import net.milkbowl.vault.economy.Economy;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
+import org.bukkit.permissions.Permission;
+import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.scheduler.BukkitScheduler;
 
 public final class MOFlight extends JavaPlugin implements Listener {
+
+    private Economy econ;
+    private Permission perms;
 
     @Override
     public void onEnable() {
@@ -17,20 +23,43 @@ public final class MOFlight extends JavaPlugin implements Listener {
         Config config = new Config(this);
         config.load();
 
+        if (!setupEconomy()) {
+            this.getLogger().severe("Disabled due to no Vault dependency found!");
+            Bukkit.getPluginManager().disablePlugin(this);
+            return;
+        }
+        this.setupPermissions();
+
         getLogger().info("飛行管理が起動しました");
         getServer().getPluginManager().registerEvents(this, this);
 
-        BukkitScheduler scheduler = getServer().getScheduler();
-        scheduler.scheduleSyncRepeatingTask(this, new Runnable() {
+    }
 
-            @Override
-            public void run() {
-                Automation automation = new Automation();
-                automation.calcTime();
-            }
+    private boolean setupEconomy() {
+        if (Bukkit.getPluginManager().getPlugin("Vault") == null) {
+            return false;
+        }
 
-        }, 0L, 20L);
+        RegisteredServiceProvider<Economy> rsp = getServer().getServicesManager().getRegistration(Economy.class);
+        if (rsp == null) {
+            return false;
+        }
+        econ = rsp.getProvider();
+        return econ != null;
+    }
 
+    private boolean setupPermissions() {
+        RegisteredServiceProvider<Permission> rsp = getServer().getServicesManager().getRegistration(Permission.class);
+        perms = rsp.getProvider();
+        return perms != null;
+    }
+
+    public Economy getEconomy() {
+        return econ;
+    }
+
+    public Permission getPermissions() {
+        return perms;
     }
 
     @Override
@@ -45,7 +74,7 @@ public final class MOFlight extends JavaPlugin implements Listener {
             Player player = (Player)sender;
             //User user = (User)sender;
 
-            if(val.flightplayer.contains(player.getPlayer())) {
+            if(Variable.flightplayer.contains(player.getPlayer())) {
 
                 player.sendMessage(ChatColor.YELLOW + "すでに飛行モードです^～^");
                 return true;
@@ -54,10 +83,10 @@ public final class MOFlight extends JavaPlugin implements Listener {
 
                 if (args.length != 0) {
 
-                    Integer time = Integer.valueOf(args[0]);
+                    Integer minutes = Integer.valueOf(args[0]);
 
                     ChangeMode changeMode = new ChangeMode();
-                    changeMode.startFlight(player, time);
+                    changeMode.startFlight(player, minutes);
                     return true;
 
                 } else {

@@ -1,14 +1,15 @@
-#AFK
-#
-#the function to kick automatically
-#max-player: how many players
-#type: tps or mspt
-#max-tps:
-#min-mspt:
+#MOFUCRAFT!!! Flight
 
-#seconds
-set-afk-interval: 5
-#minutes
+
+#1分あたりの価格
+price1: 500
+#1~10分
+
+price2: 300
+#11~30分(割引有)
+
+price3: 200
+#31~(割引有)
 
 max-player: 15
 type: "mspt"
