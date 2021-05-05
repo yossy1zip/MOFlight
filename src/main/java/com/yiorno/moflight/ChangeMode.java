@@ -39,11 +39,19 @@ public class ChangeMode {
 
         MOFlight econ = new MOFlight();
         Economy economy = econ.getEconomy();
+        Double balance = economy.getBalance(player);
+
+        if (balance < sumPrice){
+            player.sendMessage(ChatColor.AQUA + "お金が足りません！");
+            return;
+        }
 
 
         //purchase
         player.sendMessage(ChatColor.AQUA + "" + minutes + "分のフライトを " + sumPrice + "MOFU で購入しました！" );
         getLogger().info(player.getName() + " が飛行モードを購入しました | " + minutes + "分");
+
+        economy.withdrawPlayer(player, sumPrice);
 
         ConsoleCommandSender console = Bukkit.getServer().getConsoleSender();
         String command = "lp user " + player.getName() + " parent add flight";

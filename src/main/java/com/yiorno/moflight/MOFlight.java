@@ -65,6 +65,7 @@ public final class MOFlight extends JavaPlugin implements Listener {
     @Override
     public void onDisable() {
         // Plugin shutdown logic
+        getLogger().info("飛行管理が停止しました");
     }
 
     @Override
@@ -72,31 +73,51 @@ public final class MOFlight extends JavaPlugin implements Listener {
         if(cmd.getName().equalsIgnoreCase("flight")){
 
             Player player = (Player)sender;
-            //User user = (User)sender;
+
+            //check number
+            if (isInteger(args[0]) == false) {
+                player.sendMessage(ChatColor.AQUA + "時間は自然数でお願いします！");
+                return true;
+            }
+
+            Integer minutes = Integer.valueOf(args[0]);
+
+            if (minutes <= 0) {
+                player.sendMessage(ChatColor.AQUA + "時間は自然数でお願いします！");
+                return true;
+            }
+
+            if (args.length != 0) {
+                player.sendMessage(ChatColor.AQUA + "/flight <分> : フライトを購入します");
+                player.sendMessage(ChatColor.AQUA + "～ 500 MOFU/分");
+                return true;
+            }
+
 
             if(Variable.flightplayer.contains(player.getPlayer())) {
 
-                player.sendMessage(ChatColor.YELLOW + "すでに飛行モードです^～^");
+                player.sendMessage(ChatColor.AQUA + "すでに飛行モードです^～^");
                 return true;
 
             } else {
 
-                if (args.length != 0) {
-
-                    Integer minutes = Integer.valueOf(args[0]);
-
-                    ChangeMode changeMode = new ChangeMode();
-                    changeMode.startFlight(player, minutes);
-                    return true;
-
-                } else {
-                    return true;
-                }
+                ChangeMode changeMode = new ChangeMode();
+                changeMode.startFlight(player, minutes);
+                return true;
 
             }
         }
 
         return false;
+    }
+
+    public boolean isInteger(String arg) {
+        try {
+            Integer.parseInt(arg);
+            return true;
+        } catch (NumberFormatException nfex) {
+            return false;
+        }
     }
 
 }
