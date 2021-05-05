@@ -1,5 +1,6 @@
 package com.yiorno.moflight;
 
+import org.bukkit.boss.BossBar;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
@@ -11,4 +12,6 @@ public class Variable {
     public static Map<Player, Integer> map = new HashMap<>();
 
     public static List<Player> flightplayer = new ArrayList<>();
+
+    public static Map<Player, BossBar> bossBars = new HashMap<>();
 }

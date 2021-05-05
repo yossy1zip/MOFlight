@@ -8,3 +8,5 @@ depend: [LuckPerms]
 commands:
   flight:
     description: purchase a flight effect.
+    permission: mofucraft.member.flight.start
+    usage: "/flight <時間(分)> : 指定時間空を飛べるようになります (～500 MOFU/分)"

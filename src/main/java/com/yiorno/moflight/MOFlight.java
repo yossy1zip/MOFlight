@@ -3,14 +3,19 @@ package com.yiorno.moflight;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.World;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.permissions.Permission;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
+//指定時間 mofucraft.member.flight.now 権限を振るプラグイン
 public final class MOFlight extends JavaPlugin implements Listener {
 
     private Economy econ;
@@ -88,9 +93,7 @@ public final class MOFlight extends JavaPlugin implements Listener {
             }
 
             if (args.length != 0) {
-                player.sendMessage(ChatColor.AQUA + "/flight <分> : フライトを購入します");
-                player.sendMessage(ChatColor.AQUA + "～ 500 MOFU/分");
-                return true;
+                return false;
             }
 
 
@@ -119,5 +122,49 @@ public final class MOFlight extends JavaPlugin implements Listener {
             return false;
         }
     }
+
+    @EventHandler
+    public void onWorldChange(PlayerChangedWorldEvent e){
+        Player player = e.getPlayer();
+        String worldFrom = e.getFrom().getName();
+        String worldTo = player.getWorld().getName();
+
+        if (worldFrom == "world"){
+            //disable flymode
+            player.setFlying(false);
+            player.sendMessage(ChatColor.AQUA + "建築ワールド外に出たので飛行モードが無効になりました！");
+            player.sendMessage(ChatColor.AQUA + "飛べなくても時間は消費されるのでご注意ください");
+        }
+
+        if (worldTo == "world" ){
+            //re-enable flymode
+            player.setFlying(true);
+            player.sendMessage(ChatColor.AQUA + "建築ワールドに戻ったので飛行モードが再度有効になりました！");
+        }
+    }
+
+//    @EventHandler
+//    public void onQuit(PlayerQuitEvent e) {
+//       Player player = e.getPlayer();
+//
+//        if (Variable.flightplayer.contains(player.getPlayer())) {
+//            Variable.flightplayer.remove(player.getPlayer());
+//            ConsoleCommandSender console = Bukkit.getServer().getConsoleSender();
+//            String command = "lp user " + player.getName() + " parent remove flight";
+//            Bukkit.dispatchCommand(console, command);
+//        }
+//    }
+
+//    @EventHandler
+//    public void onJoin(PlayerJoinEvent e) {
+//        Player player = e.getPlayer();
+
+//        if (Variable.flightplayer.contains(player.getPlayer())) {
+//            Variable.flightplayer.remove(player.getPlayer());
+//            ConsoleCommandSender console = Bukkit.getServer().getConsoleSender();
+//            String command = "lp user " + player.getName() + " parent remove flight";
+//            Bukkit.dispatchCommand(console, command);
+//        }
+//    }
 
 }

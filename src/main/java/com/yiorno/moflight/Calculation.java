@@ -9,11 +9,12 @@ public class Calculation {
 
     public void calcTime(Player player, Integer minutes) {
 
-        final Integer[] restTime = {minutes};
-        Integer maxTime = minutes;
+        Integer restTimeMinutes = minutes;
+        final int[] restTimeSeconds = {restTimeMinutes * 60};
+        Integer maxTimeSeconds = minutes * 60;
 
 
-        while (restTime[0] >= 0) {
+        while (restTimeSeconds[0] >= 0) {
 
             BukkitScheduler scheduler = Bukkit.getServer().getScheduler();
             Bukkit.getScheduler().scheduleSyncRepeatingTask(Bukkit.getServer().getPluginManager().getPlugin("MOFlight"),
@@ -22,14 +23,15 @@ public class Calculation {
                 @Override
                 public void run() {
 
-                    restTime[0]--;
-                    Variable.map.replace(player.getPlayer(), restTime[0]);
+                    restTimeSeconds[0]--;
+                    Variable.map.replace(player.getPlayer(), restTimeSeconds[0]);
 
                     Interface ui = new Interface();
-                    if (restTime[0] == maxTime) {
-                        ui.createBossbar(player, restTime[0], maxTime);
+
+                    if (restTimeSeconds[0] == maxTimeSeconds) {
+                        ui.createBossbar(player, restTimeSeconds[0], maxTimeSeconds);
                     } else {
-                        ui.updateBossbar(player, restTime[0], maxTime);
+                        ui.updateBossbar(player, restTimeSeconds[0], maxTimeSeconds);
                     }
 
                 }
@@ -39,6 +41,9 @@ public class Calculation {
 
         ChangeMode changeMode = new ChangeMode();
         changeMode.endFlight(player);
+        Interface ui = new Interface();
+        ui.removeBossbar(player);
+
         return;
 
     }

@@ -1,5 +1,6 @@
 package com.yiorno.moflight;
 
+import net.milkbowl.vault.chat.Chat;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -12,12 +13,27 @@ import static org.bukkit.Bukkit.getLogger;
 public class ChangeMode {
 
     public void checkChange(Player player, Integer minutes) {
+
         if(!Variable.flightplayer.contains(player.getPlayer())) {
-            startFlight(player, minutes);
-            return;
+
+            if(player.getWorld().getName().equalsIgnoreCase("world")) {
+
+                startFlight(player, minutes);
+                return;
+
+            } else {
+
+                player.sendMessage(ChatColor.AQUA + "飛行は建築ワールドのみで使えます");
+                return;
+
+            }
+
         } else {
+
             return;
+
         }
+
     }
 
     public void startFlight(Player player, Integer minutes) {
@@ -53,10 +69,13 @@ public class ChangeMode {
 
         economy.withdrawPlayer(player, sumPrice);
 
+
+        //start flying
         ConsoleCommandSender console = Bukkit.getServer().getConsoleSender();
         String command = "lp user " + player.getName() + " parent add flight";
         Bukkit.dispatchCommand(console, command);
 
+        player.setFlying(true);
         Variable.flightplayer.add(player.getPlayer());
 
         Calculation calculation = new Calculation();
@@ -74,6 +93,7 @@ public class ChangeMode {
             player.sendMessage(ChatColor.AQUA + "" + "フライトが終了しました");
             getLogger().info(player.getName() + " の飛行モードが終了しました");
 
+            player.setFlying(false);
             ConsoleCommandSender console = Bukkit.getServer().getConsoleSender();
             String command = "lp user " + player.getName() + " parent remove flight";
             Bukkit.dispatchCommand(console, command);

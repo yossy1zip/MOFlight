@@ -10,36 +10,40 @@ import org.bukkit.entity.Player;
 
 public class Interface {
 
-    public void createBossbar(Player player, Integer restTime, Integer maxTime){
+    public void createBossbar(Player player, Integer restTimeSeconds, Integer maxTimeSeconds){
 
-        double percentage = restTime * 100 / maxTime;
+        double percentage = restTimeSeconds * 100 / maxTimeSeconds;
+        Integer maxTimeMinutes = maxTimeSeconds / 60;
 
         //create bossbar
-        BossBar bossbar =  Bukkit.getServer().createBossBar(ChatColor.AQUA + "フライト" + restTime + "分", BarColor.BLUE, BarStyle.SOLID);
+        BossBar bossbar =  Bukkit.getServer().createBossBar(ChatColor.AQUA + "" + maxTimeMinutes + "分のフライト^^", BarColor.BLUE, BarStyle.SOLID);
         bossbar.setVisible(true);
+        bossbar.setTitle(ChatColor.AQUA + "フライト : 残り" + restTimeSeconds + "秒");
         bossbar.setProgress(percentage);
         bossbar.addPlayer(player);
+
+        Variable.bossBars.put(player, bossbar);
     }
 
-    public void updateBossbar(Player player, Integer restTime, Integer maxTime){
+    public void updateBossbar(Player player, Integer restTimeSeconds, Integer maxTimeSeconds){
 
-        double percentage = restTime * 100 / maxTime;
+        double percentage = restTimeSeconds * 100 / maxTimeSeconds;
+        Integer maxTimeMinutes = maxTimeSeconds / 60;
 
-        //create bossbar
-        BossBar bossbar =  Bukkit.getServer().createBossBar(ChatColor.AQUA + "フライト" + restTime + "分", BarColor.BLUE, BarStyle.SOLID);
-        bossbar.setVisible(true);
+        //update bossbarupdate
+        BossBar bossbar = Variable.bossBars.get(player);
+        bossbar.setTitle(ChatColor.AQUA + "フライト : 残り" + restTimeSeconds + "秒");
         bossbar.setProgress(percentage);
-        bossbar.addPlayer(player);
+
     }
 
 
     public void removeBossbar(Player player){
 
         //remove bossbar
-        BossBar bossbar =  Bukkit.getServer().createBossBar(ChatColor.AQUA + "フライト" + restTime + "分", BarColor.BLUE, BarStyle.SOLID);
-        bossbar.setVisible(true);
-        bossbar.setProgress(percentage);
-        bossbar.addPlayer(player);
+        BossBar bossbar =  Variable.bossBars.get(player);
+        Variable.bossBars.remove(player);
+        bossbar.removePlayer(player);
     }
 
 }
