@@ -2,48 +2,54 @@ package com.yiorno.moflight;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitScheduler;
+import org.bukkit.scheduler.BukkitTask;
+
+import static com.yiorno.moflight.MOFlight.instance;
 
 public class Calculation {
 
     public void calcTime(Player player, Integer minutes) {
 
+        BukkitTask task;
         Integer restTimeMinutes = minutes;
         final int[] restTimeSeconds = {restTimeMinutes * 60};
         Integer maxTimeSeconds = minutes * 60;
-        MOFlight moflight = new MOFlight();
 
+        new BukkitRunnable() {
+            @Override
+            public void run() {
 
-        while (restTimeSeconds[0] >= 0) {
+                if (restTimeSeconds[0]<0) {
 
-            //BukkitScheduler scheduler = Bukkit.getServer().getScheduler();
-            Bukkit.getScheduler().scheduleSyncRepeatingTask(moflight.plugin, new BukkitRunnable() {
+                    ChangeMode changeMode = new ChangeMode();
+                    changeMode.endFlight(player);
 
-                @Override
-                public void run() {
+                    cancel();
 
-                    restTimeSeconds[0]--;
-                    Variable.map.replace(player.getPlayer(), restTimeSeconds[0]);
+                } else {
 
                     Interface ui = new Interface();
 
                     if (restTimeSeconds[0] == maxTimeSeconds) {
                         ui.createBossbar(player, restTimeSeconds[0], maxTimeSeconds);
                     } else {
-                        ui.updateBossbar(player, restTimeSeconds[0], maxTimeSeconds);
+
+                        if (ui.hasBossbar(player) == true) {
+                            ui.updateBossbar(player, restTimeSeconds[0], maxTimeSeconds);
+                        } else {
+                            cancel();
+                        }
+
                     }
 
+                    restTimeSeconds[0]--;
+                    Variable.map.replace(player.getPlayer(), restTimeSeconds[0]);
+
                 }
-            }, 0L, 20L);
-
-        }
-
-        ChangeMode changeMode = new ChangeMode();
-        changeMode.endFlight(player);
-        Interface ui = new Interface();
-        ui.removeBossbar(player);
+            }
+        }.runTaskTimer(instance, 20L, 20L);
 
         return;
 

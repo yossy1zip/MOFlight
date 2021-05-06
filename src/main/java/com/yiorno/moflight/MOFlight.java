@@ -14,20 +14,24 @@ import org.bukkit.permissions.Permission;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.scheduler.BukkitTask;
+import org.checkerframework.checker.units.qual.C;
 
 //指定時間 mofucraft.member.flight.now 権限を振るプラグイン
 public final class MOFlight extends JavaPlugin implements Listener {
 
+    BukkitTask task = null;
+
     private Economy econ;
     private Permission perms;
-    public static Plugin plugin;
+    static MOFlight instance;
 
     @Override
     public void onEnable() {
         // Plugin startup logic
-        plugin = this;
 
-        Plugin plugin = this;
+        instance = this;
 
         saveDefaultConfig();
         Config config = new Config(this);
@@ -42,6 +46,10 @@ public final class MOFlight extends JavaPlugin implements Listener {
         getLogger().info("飛行管理が起動しました");
         getServer().getPluginManager().registerEvents(this, this);
 
+    }
+
+    public static MOFlight getInstance() {
+        return instance;
     }
 
     private boolean setupEconomy() {
@@ -92,6 +100,17 @@ public final class MOFlight extends JavaPlugin implements Listener {
                 return true;
             }
 
+            if (minutes == 114514){
+                ChangeMode changemode = new ChangeMode();
+                changemode.endFlight(player);
+                return true;
+            }
+
+            if (minutes > 60) {
+                player.sendMessage(ChatColor.AQUA + "試験運用中のため 60分以内でお願いします！");
+                return true;
+            }
+
 
             if(Variable.flightplayer.contains(player.getPlayer())) {
 
@@ -127,14 +146,14 @@ public final class MOFlight extends JavaPlugin implements Listener {
 
         if (worldFrom == "world"){
             //disable flymode
-            player.setFlying(false);
+            player.setAllowFlight(false);
             player.sendMessage(ChatColor.AQUA + "建築ワールド外に出たので飛行モードが無効になりました！");
             player.sendMessage(ChatColor.AQUA + "飛べなくても時間は消費されるのでご注意ください");
         }
 
         if (worldTo == "world" ){
             //re-enable flymode
-            player.setFlying(true);
+            player.setAllowFlight(true);
             player.sendMessage(ChatColor.AQUA + "建築ワールドに戻ったので飛行モードが再度有効になりました！");
         }
     }

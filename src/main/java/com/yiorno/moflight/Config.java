@@ -8,7 +8,6 @@ public class Config {
     private final Plugin plugin;
     private FileConfiguration config = null;
 
-    public static Integer checkingInterval;
     public static Integer price1;
     public static Integer price2;
     public static Integer price3;
@@ -25,7 +24,6 @@ public class Config {
         }
         config = plugin.getConfig();
 
-        checkingInterval = config.getInt("checking-interval");
         price1 = config.getInt("price1");
         price2 = config.getInt("price2");
         price3 = config.getInt("price3");

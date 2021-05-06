@@ -7,6 +7,7 @@ import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
 
 import static com.yiorno.moflight.Config.*;
+import static com.yiorno.moflight.MOFlight.instance;
 import static org.bukkit.Bukkit.getLogger;
 
 public class ChangeMode {
@@ -52,8 +53,7 @@ public class ChangeMode {
         //can purchase check
         sumPrice = price * minutes;
 
-        MOFlight econ = new MOFlight();
-        Economy economy = econ.getEconomy();
+        Economy economy = instance.getEconomy();
         Double balance = economy.getBalance(player);
 
         if (balance < sumPrice){
@@ -74,11 +74,13 @@ public class ChangeMode {
         String command = "lp user " + player.getName() + " parent add flight";
         Bukkit.dispatchCommand(console, command);
 
-        player.setFlying(true);
+        player.setAllowFlight(true);
         Variable.flightplayer.add(player.getPlayer());
 
         Calculation calculation = new Calculation();
         calculation.calcTime(player, minutes);
+
+        return;
 
     }
 
@@ -92,10 +94,15 @@ public class ChangeMode {
             player.sendMessage(ChatColor.AQUA + "" + "フライトが終了しました");
             getLogger().info(player.getName() + " の飛行モードが終了しました");
 
-            player.setFlying(false);
+            player.setAllowFlight(false);
             ConsoleCommandSender console = Bukkit.getServer().getConsoleSender();
             String command = "lp user " + player.getName() + " parent remove flight";
             Bukkit.dispatchCommand(console, command);
+
+            Interface ui = new Interface();
+            ui.removeBossbar(player);
+
+            return;
 
         }
 
