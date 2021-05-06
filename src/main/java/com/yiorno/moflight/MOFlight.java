@@ -3,7 +3,6 @@ package com.yiorno.moflight;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.World;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
@@ -12,6 +11,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.permissions.Permission;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -20,10 +20,15 @@ public final class MOFlight extends JavaPlugin implements Listener {
 
     private Economy econ;
     private Permission perms;
+    public static Plugin plugin;
 
     @Override
     public void onEnable() {
         // Plugin startup logic
+        plugin = this;
+
+        Plugin plugin = this;
+
         saveDefaultConfig();
         Config config = new Config(this);
         config.load();
@@ -33,7 +38,6 @@ public final class MOFlight extends JavaPlugin implements Listener {
             Bukkit.getPluginManager().disablePlugin(this);
             return;
         }
-        this.setupPermissions();
 
         getLogger().info("飛行管理が起動しました");
         getServer().getPluginManager().registerEvents(this, this);
@@ -53,19 +57,10 @@ public final class MOFlight extends JavaPlugin implements Listener {
         return econ != null;
     }
 
-    private boolean setupPermissions() {
-        RegisteredServiceProvider<Permission> rsp = getServer().getServicesManager().getRegistration(Permission.class);
-        perms = rsp.getProvider();
-        return perms != null;
-    }
-
     public Economy getEconomy() {
         return econ;
     }
 
-    public Permission getPermissions() {
-        return perms;
-    }
 
     @Override
     public void onDisable() {
@@ -79,21 +74,22 @@ public final class MOFlight extends JavaPlugin implements Listener {
 
             Player player = (Player)sender;
 
-            //check number
-            if (isInteger(args[0]) == false) {
-                player.sendMessage(ChatColor.AQUA + "時間は自然数でお願いします！");
+            if (args.length == 0) {
+                player.sendMessage(ChatColor.AQUA + "/flight <時間(分)> : 指定時間空を飛べるようになります (～500 MOFU/分)");
                 return true;
             }
+
+            //check number
+            //if (isInteger(args[0]) == false) {
+            //    player.sendMessage(ChatColor.AQUA + "/flight <時間(分)> : 指定時間空を飛べるようになります (～500 MOFU/分)");
+            //    return true;
+            //}
 
             Integer minutes = Integer.valueOf(args[0]);
 
             if (minutes <= 0) {
                 player.sendMessage(ChatColor.AQUA + "時間は自然数でお願いします！");
                 return true;
-            }
-
-            if (args.length != 0) {
-                return false;
             }
 
 
@@ -105,7 +101,7 @@ public final class MOFlight extends JavaPlugin implements Listener {
             } else {
 
                 ChangeMode changeMode = new ChangeMode();
-                changeMode.startFlight(player, minutes);
+                changeMode.checkChange(player, minutes);
                 return true;
 
             }
@@ -118,7 +114,7 @@ public final class MOFlight extends JavaPlugin implements Listener {
         try {
             Integer.parseInt(arg);
             return true;
-        } catch (NumberFormatException nfex) {
+        } catch (NumberFormatException e) {
             return false;
         }
     }

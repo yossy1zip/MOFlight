@@ -2,6 +2,7 @@ package com.yiorno.moflight;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitScheduler;
 
@@ -12,13 +13,13 @@ public class Calculation {
         Integer restTimeMinutes = minutes;
         final int[] restTimeSeconds = {restTimeMinutes * 60};
         Integer maxTimeSeconds = minutes * 60;
+        MOFlight moflight = new MOFlight();
 
 
         while (restTimeSeconds[0] >= 0) {
 
-            BukkitScheduler scheduler = Bukkit.getServer().getScheduler();
-            Bukkit.getScheduler().scheduleSyncRepeatingTask(Bukkit.getServer().getPluginManager().getPlugin("MOFlight"),
-                    new BukkitRunnable() {
+            //BukkitScheduler scheduler = Bukkit.getServer().getScheduler();
+            Bukkit.getScheduler().scheduleSyncRepeatingTask(moflight.plugin, new BukkitRunnable() {
 
                 @Override
                 public void run() {
