@@ -21,6 +21,10 @@ public class Calculation {
             @Override
             public void run() {
 
+                if(player.hasPermission("mofucraft.member.afk")){
+                    return;
+                }
+
                 if (restTimeSeconds[0]<0) {
 
                     ChangeMode changeMode = new ChangeMode();
