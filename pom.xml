@@ -17,6 +17,7 @@
     </properties>
 
     <build>
+        <finalName>MOFlight</finalName>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

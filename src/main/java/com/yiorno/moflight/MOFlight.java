@@ -10,6 +10,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.permissions.Permission;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.RegisteredServiceProvider;
@@ -17,6 +18,8 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 import org.checkerframework.checker.units.qual.C;
+
+import java.time.temporal.ValueRange;
 
 //指定時間 mofucraft.member.flight.now 権限を振るプラグイン
 public final class MOFlight extends JavaPlugin implements Listener {
@@ -155,6 +158,14 @@ public final class MOFlight extends JavaPlugin implements Listener {
             //re-enable flymode
             player.setAllowFlight(true);
             player.sendMessage(ChatColor.AQUA + "建築ワールドに戻ったので飛行モードが再度有効になりました！");
+        }
+    }
+
+    @EventHandler
+    public void onRejoin(PlayerJoinEvent e){
+        if(Variable.flightplayer.contains(e.getPlayer())){
+            e.getPlayer().setAllowFlight(true);
+            e.getPlayer().sendMessage(ChatColor.AQUA + "飛行モードが再度有効になりました！");
         }
     }
 
